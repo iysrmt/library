@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-card {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div>
+
+    <div style="padding: 8px;">
+        <div class="layui-card">
+            <div class="layui-card-header">借阅清单</div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <colgroup>
+                        <col>
+                        <col>
+                        <col width="200">
+                        <col width="200">
+                        <col width="70">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>书名</th>
+                        <th>借阅用户</th>
+                        <th>借阅时间</th>
+                        <th>归还期限</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tBody">
+                    <tr th:each="borrow:${borrowList}">
+                        <td th:text="${borrow.bookId}"></td>
+                        <td th:text="${borrow.userId}"></td>
+                        <td th:text="${borrow.createTime}"></td>
+                        <td th:text="${borrow.deadline}"></td>
+                        <td>
+                            <button class="layui-btn layui-btn-xs" th:if="${session.sessionUser.permissions.equals('3')}"
+                                    th:onclick="revertBook([[${borrow.id}]])"
+                                    type="button">归还
+                            </button>
+                            <button class="layui-btn layui-btn-xs" th:if="${!session.sessionUser.permissions.equals('3')}"
+                                    th:onclick="revertBook([[${borrow.id}]])"
+                                    type="button">设为归还
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="layui/layui.js"></script>
+<script th:inline="javascript">
+
+    layui.use(['layer', 'laypage'], function () {
+        let $ = layui.$,
+            layer = layui.layer,
+            laypage = layui.laypage
+
+        window.revertBook = function (id) {
+            $.ajax({
+                url: 'workbench/book/revert',
+                type: 'put',
+                dataType: 'json',
+                data: {
+                    id
+                },
+                success: function (resp) {
+                    if (resp.code === 200) {
+                        layer.open({
+                            content: '归还成功!',
+                            end: function () {
+                                window.parent.main.location.href = 'workbench/book/borrow'
+                            }
+                        })
+                    } else {
+                        layer.msg(resp.message)
+                    }
+                }
+            })
+        }
+    })
+
+</script>
+</body>
+</html>

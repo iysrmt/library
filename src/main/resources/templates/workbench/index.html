@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统</title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layadmin-iframe {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            border: 0px;
+        }
+
+        html {
+            /*background-color: #f2f2f2;*/
+            /*color: #666;*/
+            background: #000 url(background.jpg) no-repeat center;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo layui-hide-xs layui-bg-black">图书管理系统</div>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                <a href="javascript:;">
+                    <img class="layui-nav-img"
+                         src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+                    [[${session.sessionUser.name}]]
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="system/user/profile" target="main">个人资料</a></dd>
+                    <dd><a href="system/user/change" target="main">修改密码</a></dd>
+                    <dd><a href="system/user/logout">退出</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
+                <a href="javascript:;">
+                    <i class="layui-icon layui-icon-more-vertical"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-find-fill"></i> 图书管理</a>
+                    <dl class="layui-nav-child">
+                        <dd th:if="${!session.sessionUser.permissions.equals('3')}">
+                            <a href="workbench/book/add" target="main">添加图书</a>
+                        </dd>
+                        <dd><a href="workbench/book/list" target="main">图书列表</a></dd>
+                        <dd><a href="workbench/book/borrow" target="main">借阅清单</a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item" th:if="${!session.sessionUser.permissions.equals('3')}">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-friends"></i> 用户管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="system/user/admin/add" target="main">添加用户</a></dd>
+                        <dd><a href="system/user/admin/list" target="main">用户列表</a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item" th:if="${session.sessionUser.permissions.equals('1')}">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-set"></i> 设置</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="system/settings/dict" target="main">字段管理</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <iframe class="layadmin-iframe" name="main"></iframe>
+        </div>
+    </div>
+
+    <!--
+    <div class="layui-footer">
+        底部固定区域
+    </div>
+    -->
+</div>
+<script src="layui/layui.js"></script>
+<script>
+    if (window.top != window) {
+        window.top.location.href = window.location
+    }
+    //JS
+    layui.use(['element', 'layer', 'util'], function () {
+        let element = layui.element
+            , layer = layui.layer
+            , util = layui.util
+            , $ = layui.$;
+
+        //头部事件
+        util.event('lay-header-event', {
+            //左侧菜单事件
+            menuLeft: function (othis) {
+                layer.msg('展开左侧菜单的操作', {icon: 0});
+            }
+            , menuRight: function () {
+                layer.open({
+                    type: 1
+                    , content: '<div style="padding: 15px;">这里什么也没有哦~</div>'
+                    , area: ['260px', '100%']
+                    , offset: 'rt' //右上角
+                    , anim: 5
+                    , shadeClose: true
+                });
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

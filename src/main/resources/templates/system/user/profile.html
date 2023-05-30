@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-card {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div style="padding: 8px;">
+    <div class="layui-card">
+        <div class="layui-card-header">个人资料</div>
+        <div class="layui-card-body">
+
+            <form class="layui-form layui-form-pane">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" name="" placeholder="" readonly th:value="${session.sessionUser.account}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">身份</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" name="" placeholder="" readonly
+                               th:if="${session.sessionUser.permissions.equals('1')}" type="text" value="超级管理员">
+                        <input autocomplete="off" class="layui-input" name="" placeholder="" readonly th:if="${session.sessionUser.permissions.equals('2')}"
+                               type="text" value="管理员">
+                        <input autocomplete="off" class="layui-input" name="" placeholder="" readonly th:if="${session.sessionUser.permissions.equals('3')}"
+                               type="text" value="用户">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">昵称</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" lay-verify="required|username" name="name" placeholder=""
+                               required
+                               th:value="${session.sessionUser.name}" type="text">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">手机</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" lay-verify="required|phone|number" name="phone" placeholder=""
+                               required th:value="${session.sessionUser.phone}" type="text">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-filter="formEditUser" lay-submit>确认修改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="layui/layui.js"></script>
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            layer = layui.layer
+
+        form.on('submit(formEditUser)', function (data) {
+            $.ajax({
+                url: 'system/user/profile',
+                type: 'put',
+                dataType: 'json',
+                data: data.field,
+                success: function (resp) {
+                    if (resp.code === 200) {
+                        layer.open({
+                            content: '修改成功',
+                            end: function () {
+                                window.parent.main.location.href = 'system/user/profile'
+                            }
+                        })
+                    } else {
+                        layer.msg(resp.message)
+                    }
+                }
+            })
+
+            return false;
+        })
+
+        form.verify({
+            username: function (value, item) {
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符'
+                }
+                if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                    return '用户名首尾不能出现下划线\'_\''
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字'
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

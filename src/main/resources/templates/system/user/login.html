@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <link href="favicon.ico?v=1.0" rel="icon" type="image/x-icon"/>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        html {
+            background: #000 url(background.jpg) no-repeat center;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .layui-fluid {
+            height: 100%;
+        }
+
+        .layui-card {
+            width: 400px;
+            height: 220px;
+            text-align: center;
+            opacity: 0.9;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <h2>图书管理系统 - 登录</h2>
+        </div>
+        <div class="layui-card-body">
+            <form class="layui-form ">
+
+                <div class="layui-form-item">
+                    <input autocomplete="off" class="layui-input" lay-verify="required" name="account"
+                           placeholder="用户名"
+                           required
+                           type="text">
+                </div>
+
+                <div class="layui-form-item">
+                    <input autocomplete="off" class="layui-input" lay-verify="required" name="password"
+                           placeholder="密码"
+                           required
+                           type="password">
+                </div>
+
+                <hr/>
+
+                <button class="layui-btn" lay-filter="login" lay-submit>登录</button>
+
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="layui/layui.js"></script>
+<script>
+
+    if (window.top != window) {
+        window.top.location.href = window.location
+    }
+
+    layui.use(['form', 'layer', 'jquery'], function () {
+
+        // 操作对象
+        let form = layui.form;
+        let $ = layui.jquery;
+        form.on('submit(login)', function (data) {
+            $.ajax({
+                url: 'system/user/login',
+                data: data.field,
+                dataType: 'json',
+                type: 'post',
+                success: function (resp) {
+                    if (resp.code === 200) {
+                        window.location.href = "workbench/index";
+                    } else {
+                        layer.msg(resp.message);
+                    }
+                }
+            })
+            return false;
+        })
+
+    });
+</script>
+</body>
+</html>

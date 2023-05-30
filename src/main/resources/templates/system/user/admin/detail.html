@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-card, .layui-panel {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <div style="padding: 8px;">
+        <div class="layui-card">
+            <div class="layui-card-header">详情</div>
+            <div class="layui-card-body">
+                <h3>
+                    用户名: [[${user.account}]]
+                </h3>
+                <h3 th:if="${user.permissions.equals('1')}">
+                    身份: 超级管理员
+                </h3>
+                <h3 th:if="${user.permissions.equals('2')}">
+                    身份: 管理员
+                </h3>
+                <h3 th:if="${user.permissions.equals('3')}">
+                    身份: 普通用户
+                </h3>
+                <h3 th:if="${user.permissions.equals('4')}">
+                    身份: 禁用用户
+                </h3>
+                <h3>
+                    姓名: [[${user.name}]]
+                    <br>
+                    创建时间: [[${user.createTime}]]
+                    <br>
+                    创建人: [[${user.createBy}]]
+                    <br>
+                    修改时时: [[${user.editTime}]]
+                    <br>
+                    修改人: [[${user.editBy}]]
+                </h3>
+            </div>
+        </div>
+
+        <div class="layui-card">
+            <div class="layui-card-header">操作</div>
+            <div class="layui-card-body">
+
+                <div th:if="${user.permissions.equals('1')}">
+                    <h2 style="color: red">超级管理员不可操作!</h2>
+                </div>
+
+                <div th:if="${!user.permissions.equals('1')}">
+                    <form action="" class="layui-form layui-form-pane">
+
+                        <input autocomplete="off" class="layui-input" id="editId" lay-verify="required" name="id"
+                               required
+                               style="display: none;"
+                               th:value="${user.id}"
+                               type="text">
+
+                        <div class="layui-form-item layui-inline" pane>
+                            <label class="layui-form-label">身份 / 状态</label>
+                            <div class="layui-input-block">
+                                <select id="editPermissions" lay-verify="required|select" name="permissions" required>
+                                    <option value="">---请选择新身份---</option>
+                                    <option value="2">管理员</option>
+                                    <option value="3">普通用户</option>
+                                    <option value="4">禁用用户</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        <button class="layui-btn layui-btn-warm" lay-filter="formUser" lay-submit type="button">更新
+                        </button>
+                        <button class="layui-btn layui-btn-danger" th:onclick="removeUser([[${user.id}]])"
+                                type="button">删除
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="layui/layui.js"></script>
+<script th:inline="javascript">
+    layui.use(['layer', 'form'], function () {
+        let $ = layui.$,
+            layer = layui.layer,
+            form = layui.form
+
+        // 删除用户
+        window.removeUser = function (id) {
+            layer.confirm('删除后无法复原, 确认删除该用户?', function (index) {
+                $.ajax({
+                    url: 'system/user/admin/remove',
+                    type: 'delete',
+                    dataType: 'json',
+                    data: {
+                        id
+                    },
+                    success: function (resp) {
+                        if (resp.code === 200) {
+                            window.parent.main.location.href = 'system/user/admin/list'
+                        } else {
+                            layer.msg(resp.message)
+                        }
+                    }
+                })
+                layer.close(index)
+            })
+        }
+
+        // 更新用户身份
+        form.on('submit(formUser)', function (data) {
+
+            layer.confirm('确认更新身份?', function (index) {
+                $.ajax({
+                    url: 'system/user/admin/edit',
+                    type: 'put',
+                    dataType: 'json',
+                    data: data.field,
+                    success: function (resp) {
+                        if (resp.code === 200) {
+                            layer.open({
+                                content: '更新成功!',
+                                end: function () {
+                                    window.parent.main.location.href = 'system/user/admin/list'
+                                }
+                            })
+                        } else {
+                            layer.msg(resp.message)
+                        }
+                    }
+                })
+                layer.close(index)
+            })
+
+            return false
+        })
+    })
+</script>
+</body>
+</html>

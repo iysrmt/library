@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-card {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div style="padding: 8px">
+
+        <div class="layui-card">
+            <div class="layui-card-header">说明</div>
+            <div class="layui-card-body">
+                字段仅支持完整替换, 操作后所有书籍的分类信息将失效, 请谨慎操作!
+            </div>
+        </div>
+
+        <div class="layui-card">
+            <div class="layui-card-header">操作</div>
+            <div class="layui-card-body">
+                <a class="layui-btn" href="system/settings/download">
+                    <i class="layui-icon">&#xe601;</i>
+                    下载 Excel 模板 (xlsx)
+                </a>
+                <button class="layui-btn" id="uploadExcelBtn" type="button">
+                    <i class="layui-icon">&#xe67c;</i>
+                    上传 Excel (xlsx)
+                </button>
+            </div>
+        </div>
+
+        <div class="layui-card">
+            <div class="layui-card-header">分类</div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <colgroup>
+                        <col>
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>分类</th>
+                        <th>序号</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="category:${categoryList}">
+                        <td th:text="${category.value}"></td>
+                        <td th:text="${category.orderNo}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script src="layui/layui.js"></script>
+<script th:inline="javascript">
+    layui.use(['upload', 'layer'], function () {
+        let $ = layui.$,
+            upload = layui.upload,
+            layer = layui.layer
+
+        upload.render({
+            elem: '#uploadExcelBtn',
+            exts: 'xlsx',
+            url: 'system/settings/upload',
+            done: function (resp) {
+                if (resp.code === 200) {
+                    layer.alert('上传成功!', function (index) {
+                        window.parent.main.location.href = 'system/settings/dict'
+                        layer.close(index);
+                    });
+                } else {
+                    layer.msg(resp.message)
+                }
+            },
+            error: function () {
+                layer.msg('系统繁忙, 请稍后重试...')
+            }
+        })
+    })
+</script>
+</body>
+</html>

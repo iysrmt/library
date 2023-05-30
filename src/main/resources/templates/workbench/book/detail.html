@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-card, .layui-panel {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div style="padding: 8px;">
+        <div class="layui-card">
+            <div class="layui-card-header">详情</div>
+            <div class="layui-card-body">
+                <h3>
+                    书名: [[${book.name}]]
+                    <br>
+                    作者: [[${book.author}]]
+                    <br>
+                    出版社: [[${book.publisher}]]
+                    <br>
+                    ISBN: [[${book.isbn}]]
+                    <br>
+                    单价: [[${book.price}]]
+                    <br>
+                    类型: [[${book.category}]]
+                    <br>
+                    库存: [[${inventory.count}]]
+                </h3>
+                <h3 th:if="${book.editBy == null}">
+                    创建人: [[${book.createBy}]] - [[${book.createTime}]]
+                </h3>
+                <h3 th:if="${book.editBy != null}">
+                    修改人: [[${book.editBy}]] - [[${book.editTime}]]
+                </h3>
+            </div>
+        </div>
+
+        <div class="layui-card">
+            <div class="layui-card-header">操作</div>
+            <div class="layui-card-body">
+                <button class="layui-btn" th:onclick="borrowBook([[${book.id}]])" type="button">借阅</button>
+                <button class="layui-btn layui-btn-warm" th:if="${!session.sessionUser.permissions.equals('3')}" th:onclick="openEditBook([[${book.id}]])"
+                        type="button">编辑
+                </button>
+                <button class="layui-btn layui-btn-danger" th:if="${!session.sessionUser.permissions.equals('3')}" th:onclick="removeBook([[${book.id}]])"
+                        type="button">
+                    删除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 更新模态窗口 -->
+    <div id="editBook" style="padding: 8px; display: none;">
+
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-panel">
+                    <div style="padding: 30px;">
+
+                        <form action="" class="layui-form layui-form-pane">
+
+                            <input autocomplete="off" class="layui-input" id="editId" lay-verify="required" name="id"
+                                   required
+                                   style="display: none;"
+                                   type="text">
+
+                            <div class="layui-form-item layui-inline">
+                                <label class="layui-form-label">书名</label>
+                                <div class="layui-input-block">
+                                    <input autocomplete="off" class="layui-input" id="editName" lay-verify="required" name="name"
+                                           required
+                                           type="text">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item layui-inline">
+                                <label class="layui-form-label">作者</label>
+                                <div class="layui-input-block">
+                                    <input autocomplete="off" class="layui-input" id="editAuthor" lay-verify="required" name="author"
+                                           required
+                                           type="text">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item layui-inline">
+                                <label class="layui-form-label">出版社</label>
+                                <div class="layui-input-block">
+                                    <input autocomplete="off" class="layui-input" id="editPublisher" lay-verify="required"
+                                           name="publisher"
+                                           required
+                                           type="text">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="layui-form-item layui-inline">
+                                <label class="layui-form-label">ISBN</label>
+                                <div class="layui-input-block">
+                                    <input autocomplete="off" class="layui-input" id="editIsbn" lay-verify="required|number" name="isbn"
+                                           required
+                                           type="text">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item layui-inline">
+                                <label class="layui-form-label">单价</label>
+                                <div class="layui-input-block">
+                                    <input autocomplete="off" class="layui-input" id="editPrice" lay-verify="required|number" name="price"
+                                           required
+                                           type="text">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item layui-inline">
+                                <label class="layui-form-label">分类</label>
+                                <div class="layui-input-block">
+                                    <select id="editCategory" name="category">
+                                        <option value=""></option>
+                                        <option th:each="category:${categoryList}" th:text="${category.value}"
+                                                th:value="${category.id}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="layui-form-item layui-inline">
+                                <label class="layui-form-label">库存</label>
+                                <div class="layui-input-block">
+                                    <input autocomplete="off" class="layui-input" id="editCount" lay-verify="required|number" name="count"
+                                           required
+                                           type="text">
+                                </div>
+                            </div>
+                            <hr>
+                            <button class="layui-btn" lay-filter="formBook" lay-submit>更新</button>
+                            <button class="layui-btn layui-btn-primary" id="resetButton" type="reset">重置</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="layui/layui.js"></script>
+<script th:inline="javascript">
+    layui.use(['layer', 'form'], function () {
+        let $ = layui.$,
+            layer = layui.layer,
+            form = layui.form
+
+        // 删除图书
+        window.removeBook = function (id) {
+            layer.confirm('删除后无法复原, 确认删除该图书?', function (index) {
+                $.ajax({
+                    url: 'workbench/book/remove',
+                    type: 'delete',
+                    dataType: 'json',
+                    data: {
+                        id
+                    },
+                    success: function (resp) {
+                        if (resp.code === 200) {
+                            window.parent.main.location.href = 'workbench/book/list'
+                        } else {
+                            layer.msg(resp.message)
+                        }
+                    }
+                })
+                layer.close(index)
+            })
+        }
+
+        // 编辑图书
+        window.openEditBook = function (id) {
+            layer.open({
+                type: 1,
+                title: '编辑',
+                content: $('#editBook'),
+                area: ['', '560px'],
+                success: function (layero, index) {
+                    let name = $("#editName")
+                    let author = $("#editAuthor")
+                    let publisher = $("#editPublisher")
+                    let isbn = $("#editIsbn")
+                    let price = $("#editPrice")
+                    let category = $("#editCategory")
+                    let count = $("#editCount")
+
+                    $.ajax({
+                        url: 'workbench/book/edit',
+                        type: 'get',
+                        dataType: 'json',
+                        data: {
+                            id
+                        },
+                        success: function (resp) {
+                            $('#editId').val(resp.data.book.id)
+                            name.val(resp.data.book.name)
+                            author.val(resp.data.book.author)
+                            publisher.val(resp.data.book.publisher)
+                            isbn.val(resp.data.book.isbn)
+                            price.val(resp.data.book.price)
+                            category.val(resp.data.book.category)
+                            count.val(resp.data.inventory.count)
+                            form.render()
+                        }
+                    })
+                }
+            })
+        }
+        form.on('submit(formBook)', function (data) {
+            $.ajax({
+                url: 'workbench/book/edit',
+                type: 'put',
+                dataType: 'json',
+                data: data.field,
+                success: function (resp) {
+                    if (resp.code === 200) {
+                        document.getElementById('resetButton').click()
+                        layer.open({
+                            content: '修改成功!',
+                            end: function () {
+                                window.parent.main.location.href = 'workbench/book/list'
+                            }
+                        })
+                    } else {
+                        layer.msg(resp.message)
+                    }
+                }
+            })
+            return false
+        })
+
+        // 借阅
+        window.borrowBook = function (id) {
+            layer.confirm('确认借阅该图书?', function (index) {
+                    $.ajax({
+                        url: 'workbench/book/borrow',
+                        type: 'put',
+                        dataType: 'json',
+                        data: {
+                            id
+                        },
+                        success: function (resp) {
+                            if (resp.code === 200) {
+                                layer.open({
+                                    content: resp.message,
+                                    end: function () {
+                                        window.parent.main.location.href = 'workbench/book/list'
+                                    }
+                                })
+                            } else {
+                                layer.msg(resp.message)
+                            }
+                        }
+                    })
+                    layer.close(index)
+                }
+            )
+        }
+
+    })
+</script>
+</body>
+</html>

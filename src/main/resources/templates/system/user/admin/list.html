@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-card {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div>
+
+    <div style="padding: 8px;">
+
+        <div class="layui-card">
+            <div class="layui-card-header">用户列表</div>
+            <div class="layui-card-body">
+                <form action="" class="layui-form layui-form-pane">
+
+                    <!-- 用户名模糊搜索 -->
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input autocomplete="off" class="layui-input" id="searchAccount" name="account"
+                                   placeholder=""
+                                   type="text">
+                        </div>
+                    </div>
+                    <hr>
+                    <button class="layui-btn" lay-filter="formSearch" lay-submit>搜索</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div id="page" style="text-align: center"></div>
+            </div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <colgroup>
+                        <col>
+                        <col width="150">
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col width="50">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>用户名</th>
+                        <th>身份
+                            <button class="layui-btn layui-btn-radius layui-btn-primary layui-btn-xs" id="tipsMsg"
+                                    type="button">
+                                <i class="layui-icon layui-icon-about" style="color: red"></i>
+                            </button>
+                        </th>
+                        <th>姓名</th>
+                        <th>手机号</th>
+                        <th>创建时间</th>
+                        <th>创建人</th>
+                        <th>修改时间</th>
+                        <th>修改人</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tBody">
+                    <tr>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script src="layui/layui.js"></script>
+<script th:inline="javascript">
+
+    layui.use(['jquery', 'laypage', 'form', 'layer'], function () {
+        let $ = layui.jquery,
+            laypage = layui.laypage,
+            form = layui.form,
+            layer = layui.layer
+
+        let count = [[${count}]]
+        flushPage(count)
+
+        // 分页
+        function flushPage(count) {
+            laypage.render({
+                elem: 'page',
+                count: count,
+                limit: 10,
+                jump: function (obj, first) {
+                    flushDOM(obj.curr, obj.limit)
+                }
+            })
+        }
+
+        // 更新DOM
+        function flushDOM(pageNo, pageSize) {
+            let account = $('#searchAccount').val()
+
+            $.ajax({
+                url: 'system/user/admin/queryUserListByConditionForPage',
+                type: 'get',
+                dataType: 'json',
+                async: false,
+                data: {
+                    account,
+                    pageNo,
+                    pageSize
+                },
+                success: function (resp) {
+                    if (resp.code === 200) {
+                        count = resp.data.count
+                        let htmlStr = "";
+                        $.each(resp.data.userList, function (i, v) {
+                            htmlStr += '<tr>'
+                            htmlStr += '<td>' + v.account + '</td>'
+                            htmlStr += '<td>' + v.permissions + '</td>'
+                            htmlStr += '<td>' + v.name + '</td>'
+                            htmlStr += '<td>' + v.phone + '</td>'
+                            htmlStr += '<td>' + v.createTime + '</td>'
+                            htmlStr += '<td>' + v.createBy + '</td>'
+                            htmlStr += '<td>' + v.editTime + '</td>'
+                            htmlStr += '<td>' + v.editBy + '</td>'
+                            htmlStr += '<td><a class="layui-btn layui-btn-xs" target="main" href="system/user/admin/detail?id=' + v.id + '"><i class="layui-icon">&#xe602;</i></a></td>'
+                            htmlStr += '</tr>'
+                        })
+                        $("#tBody").html(htmlStr)
+                    }
+                }
+            })
+        }
+
+        // 搜索
+        form.on('submit(formSearch)', function (data) {
+            flushDOM(1, 10)
+            flushPage(count)
+            return false
+        })
+
+        // 身份 / 状态说明
+        $("#tipsMsg").on('click', function () {
+            let that = this
+            layer.tips('1 超级管理员<br>2 管理员<br>3 普通用户<br>4 禁用用户', that, {
+                tips: 1
+            })
+        })
+
+
+    })
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-card {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div>
+
+    <div style="padding: 8px;">
+
+        <div class="layui-card" style="opacity: 1;">
+            <div class="layui-card-header">图书列表</div>
+            <div class="layui-card-body">
+                <form action="" class="layui-form layui-form-pane">
+
+                    <!-- 书名模糊搜索 -->
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">书名</label>
+                        <div class="layui-input-block">
+                            <input autocomplete="off" class="layui-input" id="searchName" name="name" placeholder=""
+                                   type="text">
+                        </div>
+                    </div>
+
+                    <!-- 作者模糊搜索 -->
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">作者</label>
+                        <div class="layui-input-block">
+                            <input autocomplete="off" class="layui-input" id="searchAuthor" name="author" placeholder=""
+                                   type="text">
+                        </div>
+                    </div>
+
+                    <!-- 出版社模糊搜索 -->
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">出版社</label>
+                        <div class="layui-input-block">
+                            <input autocomplete="off" class="layui-input" id="searchPublisher" name="publisher" placeholder=""
+                                   type="text">
+                        </div>
+                    </div>
+
+                    <!-- ISBN模糊搜索 -->
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">ISBN</label>
+                        <div class="layui-input-block">
+                            <input autocomplete="off" class="layui-input" id="searchIsbn" name="isbn" placeholder=""
+                                   type="text">
+                        </div>
+                    </div>
+
+                    <!-- 分类下拉框 -->
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">分类</label>
+                        <div class="layui-input-block">
+                            <select id="searchCategory" name="category">
+                                <option value=""></option>
+                                <option th:each="category:${categoryList}" th:text="${category.value}"
+                                        th:value="${category.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <hr>
+                    <button class="layui-btn" lay-filter="formSearch" lay-submit>搜索</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div id="page" style="text-align: center"></div>
+            </div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <colgroup>
+                        <col>
+                        <col>
+                        <col>
+                        <col width="150">
+                        <col width="100">
+                        <col width="60">
+                        <col width="0">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>书名</th>
+                        <th>作者</th>
+                        <th>出版社</th>
+                        <th>ISBN</th>
+                        <th>单价</th>
+                        <th>分类</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tBody">
+                    <tr>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script src="layui/layui.js"></script>
+<script th:inline="javascript">
+
+    layui.use(['jquery', 'laypage', 'form', 'layer'], function () {
+        let $ = layui.jquery
+        let laypage = layui.laypage
+        let form = layui.form
+        let layer = layui.layer
+        let count = [[${count}]]
+        flushPage(count)
+
+        // 分页
+        function flushPage(count) {
+            laypage.render({
+                elem: 'page',
+                count: count,
+                limit: 10,
+                jump: function (obj, first) {
+                    flushDOM(obj.curr, obj.limit)
+                }
+            })
+        }
+
+        // 更新DOM
+        function flushDOM(pageNo, pageSize) {
+            let name = $('#searchName').val()
+            let author = $('#searchAuthor').val()
+            let publisher = $('#searchPublisher').val()
+            let isbn = $('#searchIsbn').val()
+            let category = $('#searchCategory').val()
+
+            $.ajax({
+                url: 'workbench/book/queryBookListByConditionForPage',
+                type: 'get',
+                dataType: 'json',
+                async: false,
+                data: {
+                    name,
+                    author,
+                    publisher,
+                    isbn,
+                    category,
+                    pageNo,
+                    pageSize
+                },
+                success: function (resp) {
+                    if (resp.code === 200) {
+                        count = resp.data.count
+                        let htmlStr = "";
+                        $.each(resp.data.bookList, function (i, v) {
+                            htmlStr += '<tr>'
+                            htmlStr += '<td>' + v.name + '</td>'
+                            htmlStr += '<td>' + v.author + '</td>'
+                            htmlStr += '<td>' + v.publisher + '</td>'
+                            htmlStr += '<td>' + v.isbn + '</td>'
+                            htmlStr += '<td>' + v.price + '</td>'
+                            htmlStr += '<td>' + v.category + '</td>'
+                            htmlStr += '<td><a class="layui-btn layui-btn-xs" target="main" href="workbench/book/detail?id=' + v.id + '"><i class="layui-icon">&#xe602;</i></a></td>'
+                            htmlStr += '</tr>'
+                        })
+                        $("#tBody").html(htmlStr)
+                    }
+                }
+            })
+        }
+
+        // 搜索
+        form.on('submit(formSearch)', function (data) {
+            flushDOM(1, 10)
+            flushPage(count)
+            return false
+        })
+
+    })
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-card {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div style="padding: 8px;">
+    <div class="layui-card">
+        <div class="layui-card-header">修改密码</div>
+        <div class="layui-card-body">
+
+            <form action="" class="layui-form layui-form-pane">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">旧密码</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" lay-verify="required" name="oldPwd" placeholder=""
+                               required
+                               type="password">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">新密码</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" lay-verify="required|password" name="newPwd" placeholder=""
+                               required type="password">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">新密码*2</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" lay-verify="required|password|confirmPwd" name=""
+                               placeholder=""
+                               required type="password">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-filter="formEditUser" lay-submit>确认修改</button>
+                        <button class="layui-btn layui-btn-primary" type="reset">重新填写</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script src="layui/layui.js"></script>
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            layer = layui.layer
+
+        form.on('submit(formEditUser)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+
+            $.ajax({
+                url: 'system/user/change',
+                type: 'put',
+                dataType: 'json',
+                data: data.field,
+                success: function (resp) {
+                    if (resp.code === 200) {
+                        layer.open({
+                            content: '修改成功',
+                            end: function () {
+                                window.parent.main.location.href = 'system/user/change'
+                            }
+                        })
+                    } else {
+                        layer.msg(resp.message)
+                    }
+                }
+            })
+
+            return false;
+        })
+
+        form.verify({
+            password: function (value, item) { //value：表单的值、item：表单的DOM对象
+                if (!new RegExp("^[\\S]{6,12}$").test(value)) {
+                    return '密码必须6到12位，且不能出现空格';
+                }
+            },
+            confirmPwd: function (value, item) {
+                if ($('input[name=newPwd]').val() !== value)
+                    return '两次密码输入不一致！';
+            }
+        })
+    })
+</script>
+</body>
+</html>

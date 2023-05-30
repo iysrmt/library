@@ -44,6 +44,7 @@
    
    # MySQL 中操作
    create database library;
+   use library;
    source /path/tbl_user.sql;
    source /path/tbl_dict_value.sql;
    source /path/tbl_book.sql;

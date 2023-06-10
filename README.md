@@ -10,7 +10,7 @@
 
 ### 登录页
 
-![image-20230530193328910](https://raw.githubusercontent.com/iysrmt/library/main/README.assets/image-20230530193348281.png)
+![image-20230530193328910](https://raw.githubusercontent.com/iysrmt/library/main/README.assets/image-20230530193328910.png)
 
 ### 超级管理员主页
 

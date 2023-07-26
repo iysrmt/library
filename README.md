@@ -10,19 +10,19 @@
 
 ### 登录页
 
-![image-20230530193328910](https://raw.githubusercontent.com/iysrmt/library/main/README.assets/image-20230530193328910.png)
+![image-20230530193328910](https://raw.githubusercontent.com/iysrmt/library/main/assets/image-20230530193328910.png)
 
 ### 超级管理员主页
 
-![image-20230530193348281](https://raw.githubusercontent.com/iysrmt/library/main/README.assets/image-20230530193348281.png)
+![image-20230530193348281](https://raw.githubusercontent.com/iysrmt/library/main/assets/image-20230530193348281.png)
 
 ### 管理员主页
 
-![image-20230530193452641](https://raw.githubusercontent.com/iysrmt/library/main/README.assets/image-20230530193452641.png)
+![image-20230530193452641](https://raw.githubusercontent.com/iysrmt/library/main/assets/image-20230530193452641.png)
 
 ### 普通用户主页
 
-![image-20230530193845440](https://raw.githubusercontent.com/iysrmt/library/main/README.assets/image-20230530193845440.png)
+![image-20230530193845440](https://raw.githubusercontent.com/iysrmt/library/main/assets/image-20230530193845440.png)
 
 ## 安装说明
 

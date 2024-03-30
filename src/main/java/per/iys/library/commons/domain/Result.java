@@ -21,7 +21,7 @@ public class Result<T> {
 
     // 返回数据
     protected static <T> Result<T> build(T data) {
-        Result<T> result = new Result<T>();
+        Result<T> result = new Result<>();
         if (data != null)
             result.setData(data);
         return result;
@@ -42,7 +42,6 @@ public class Result<T> {
      * 操作成功
      */
     public static <T> Result<T> ok(T data) {
-        Result<T> result = build(data);
         return build(data, ResultCodeEnum.SUCCESS);
     }
 
@@ -54,7 +53,6 @@ public class Result<T> {
      * 操作失败
      */
     public static <T> Result<T> fail(T data) {
-        Result<T> result = build(data);
         return build(data, ResultCodeEnum.FAIL);
     }
 

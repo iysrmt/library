@@ -49,9 +49,6 @@ public class WorkbenchController {
 
     /**
      * 添加图书页
-     *
-     * @param model
-     * @return
      */
     @GetMapping("/book/add")
     public String toAddBook(HttpSession session, Model model) {
@@ -74,8 +71,6 @@ public class WorkbenchController {
      *
      * @param book      图书
      * @param inventory 库存
-     * @param session
-     * @return
      */
     @PostMapping("/book/add")
     public @ResponseBody Result<?> addBook(Book book, Inventory inventory, HttpSession session) {
@@ -112,9 +107,6 @@ public class WorkbenchController {
 
     /**
      * 图书列表
-     *
-     * @param model
-     * @return
      */
     @GetMapping("/book/list")
     public String toBookList(Model model) {
@@ -130,11 +122,6 @@ public class WorkbenchController {
 
     /**
      * 根据条件分页响应图书
-     *
-     * @param book
-     * @param pageNo
-     * @param pageSize
-     * @return
      */
     @GetMapping("/book/queryBookListByConditionForPage")
     public @ResponseBody Result<?> queryBookListByConditionForPage(Book book, int pageNo, int pageSize) {
@@ -152,9 +139,7 @@ public class WorkbenchController {
     /**
      * 跳转到图书详情页
      *
-     * @param id    图书 id
-     * @param model
-     * @return
+     * @param id 图书 id
      */
     @GetMapping("/book/detail")
     public String toDetail(String id, Model model) {
@@ -172,10 +157,6 @@ public class WorkbenchController {
 
     /**
      * 删除图书
-     *
-     * @param id
-     * @param session
-     * @return
      */
     @DeleteMapping("/book/remove")
     public @ResponseBody Result<?> removeBook(String id, HttpSession session) {
@@ -194,10 +175,6 @@ public class WorkbenchController {
 
     /**
      * 获取图书信息用于编辑
-     *
-     * @param id
-     * @param session
-     * @return
      */
     @GetMapping("/book/edit")
     public @ResponseBody Result<?> editBookShow(String id, HttpSession session) {
@@ -222,10 +199,8 @@ public class WorkbenchController {
     /**
      * 修改图书信息
      *
-     * @param book    图书
-     * @param count   库存
-     * @param session
-     * @return
+     * @param book  图书
+     * @param count 库存
      */
     @PutMapping("/book/edit")
     public @ResponseBody Result<?> editBook(Book book, String count, HttpSession session) {
@@ -250,9 +225,7 @@ public class WorkbenchController {
     /**
      * 借问图书
      *
-     * @param id      图书 id
-     * @param session
-     * @return
+     * @param id 图书 id
      */
     @PutMapping("/book/borrow")
     public @ResponseBody Result<?> borrowBook(String id, HttpSession session) {
@@ -277,10 +250,6 @@ public class WorkbenchController {
 
     /**
      * 跳转到借阅清单页
-     *
-     * @param session
-     * @param model
-     * @return
      */
     @GetMapping("/book/borrow")
     public String toBorrow(HttpSession session, Model model) {
@@ -305,7 +274,6 @@ public class WorkbenchController {
      * 归还图书
      *
      * @param id 借阅记录的 id
-     * @return
      */
     @PutMapping("/book/revert")
     public @ResponseBody Result<?> revert(String id, HttpSession session) {

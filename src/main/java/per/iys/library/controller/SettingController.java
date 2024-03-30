@@ -40,9 +40,6 @@ public class SettingController {
 
     /**
      * 跳转到字段页面
-     *
-     * @param model
-     * @return
      */
     @GetMapping("/dict")
     public String toDict(Model model) {
@@ -53,10 +50,6 @@ public class SettingController {
 
     /**
      * 下载 Excel (xlsx) 模板
-     *
-     * @param session
-     * @param response
-     * @throws IOException
      */
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public void downloadExcel(HttpSession session, HttpServletResponse response) throws IOException {
@@ -85,10 +78,6 @@ public class SettingController {
 
     /**
      * 上传 Excel (xlsx) 更新分类
-     *
-     * @param session
-     * @param file
-     * @return
      */
     @PostMapping("/upload")
     public @ResponseBody Result<?> uploadExcel(HttpSession session, MultipartFile file) {

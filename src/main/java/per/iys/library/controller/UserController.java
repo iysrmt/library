@@ -32,8 +32,6 @@ public class UserController {
 
     /**
      * 跳转到登录页
-     *
-     * @return
      */
     @GetMapping("/login")
     public String toLogin(HttpSession session) {
@@ -47,10 +45,6 @@ public class UserController {
 
     /**
      * 登录
-     *
-     * @param user
-     * @param session
-     * @return
      */
     @PostMapping("/login")
     public @ResponseBody Result<?> login(User user, HttpSession session) {
@@ -89,9 +83,6 @@ public class UserController {
 
     /**
      * 退出登录
-     *
-     * @param session
-     * @return
      */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -101,8 +92,6 @@ public class UserController {
 
     /**
      * 个人信息页
-     *
-     * @return
      */
     @GetMapping("/profile")
     public String toProfile() {
@@ -111,10 +100,6 @@ public class UserController {
 
     /**
      * 更新个人信息
-     *
-     * @param user
-     * @param session
-     * @return
      */
     @PutMapping("/profile")
     public @ResponseBody Result<?> modifyUser(User user, HttpSession session) {
@@ -141,8 +126,6 @@ public class UserController {
 
     /**
      * 修改密码页
-     *
-     * @return
      */
     @GetMapping("/change")
     public String toChangePwd() {
@@ -154,8 +137,6 @@ public class UserController {
      *
      * @param oldPwd  旧密码
      * @param newPwd  新密码
-     * @param session
-     * @return
      */
     @PutMapping("/change")
     public @ResponseBody Result<?> changePwd(String oldPwd, String newPwd, HttpSession session) {
@@ -180,8 +161,6 @@ public class UserController {
 
     /**
      * 跳转到 添加用户
-     *
-     * @return
      */
     @GetMapping("/admin/add")
     public String toAddUser() {
@@ -190,10 +169,6 @@ public class UserController {
 
     /**
      * 添加用户
-     *
-     * @param user
-     * @param session
-     * @return
      */
     @PostMapping("/admin/add")
     public @ResponseBody Result<?> addUser(User user, HttpSession session) {
@@ -223,9 +198,6 @@ public class UserController {
 
     /**
      * 跳转到 用户列表
-     *
-     * @param model
-     * @return
      */
     @GetMapping("/admin/list")
     public String toList(Model model) {
@@ -236,11 +208,6 @@ public class UserController {
 
     /**
      * 用户列表
-     *
-     * @param user
-     * @param pageNo
-     * @param pageSize
-     * @return
      */
     @GetMapping("/admin/queryUserListByConditionForPage")
     public @ResponseBody Result<?> queryUserListByConditionForPage(User user, int pageNo, int pageSize) {
@@ -257,9 +224,6 @@ public class UserController {
 
     /**
      * 跳转到 用户操作详情
-     *
-     * @param model
-     * @return
      */
     @GetMapping("/admin/detail")
     public String toDetail(Model model, String id) {
@@ -270,10 +234,6 @@ public class UserController {
 
     /**
      * 删除用户
-     *
-     * @param session
-     * @param id
-     * @return
      */
     @DeleteMapping("/admin/remove")
     public @ResponseBody Result<?> removeUser(HttpSession session, String id) {
@@ -296,10 +256,6 @@ public class UserController {
 
     /**
      * 更新用户身份
-     *
-     * @param session
-     * @param user
-     * @return
      */
     @PutMapping("/admin/edit")
     public @ResponseBody Result<?> editUser(HttpSession session, User user) {

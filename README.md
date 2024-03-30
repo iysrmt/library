@@ -42,7 +42,7 @@
    # 控制台中操作 登录
    mysql -uroot -p
    
-   # MySQL 中操作, 注意: 会删除字为 library 的数据库
+   # MySQL 中操作, 注意: 会删除名为 library 的数据库
    source /path/library.sql;
    ```
 

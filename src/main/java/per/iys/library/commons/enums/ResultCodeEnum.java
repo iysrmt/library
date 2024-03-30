@@ -14,7 +14,6 @@ public enum ResultCodeEnum {
     ILLEGAL_REQUEST(204, "非法请求"),
     PAY_RUN(205, "支付中"),
     ARGUMENT_VALID_ERROR(206, "参数校验错误"),
-
     LOGIN_ERROR(207, "用户名或密码错误"),
     LOGIN_AUTH(208, "未登陆"),
     PERMISSION(209, "没有权限"),
@@ -33,11 +32,11 @@ public enum ResultCodeEnum {
     CODE_ERROR(223, "验证码错误!"),
     TOKEN_ERROR(224, "Token无效!");
 
-    private Integer code;
+    private final Integer code;
 
-    private String message;
+    private final String message;
 
-    private ResultCodeEnum(Integer code, String message) {
+    ResultCodeEnum(Integer code, String message) {
         this.code = code;
         this.message = message;
     }

@@ -135,8 +135,8 @@ public class UserController {
     /**
      * 修改个人密码
      *
-     * @param oldPwd  旧密码
-     * @param newPwd  新密码
+     * @param oldPwd 旧密码
+     * @param newPwd 新密码
      */
     @PutMapping("/change")
     public @ResponseBody Result<?> changePwd(String oldPwd, String newPwd, HttpSession session) {

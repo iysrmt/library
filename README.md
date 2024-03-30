@@ -42,14 +42,8 @@
    # 控制台中操作 登录
    mysql -uroot -p
    
-   # MySQL 中操作
-   create database library;
-   use library;
-   source /path/tbl_user.sql;
-   source /path/tbl_dict_value.sql;
-   source /path/tbl_book.sql;
-   source /path/tbl_borrow.sql;
-   source /path/tbl_inventory.sql;
+   # MySQL 中操作, 注意: 会删除字为 library 的数据库
+   source /path/library.sql;
    ```
 
 2. 配置文件 `src/main/resources/application.yml`
@@ -58,7 +52,7 @@
    spring:
      datasource:
        driver-class-name: com.mysql.cj.jdbc.Driver
-       url: jdbc:mysql://localhost:3306/数据库
+       url: jdbc:mysql://localhost:3306/library
        username: 数据库用户
        password: 密码
    ```

@@ -39,8 +39,6 @@ public class WorkbenchController {
 
     /**
      * 工作台主页
-     *
-     * @return
      */
     @GetMapping("/index")
     public String toWorkbench() {
@@ -98,7 +96,6 @@ public class WorkbenchController {
 
         inventory.setId(IdUtil.fastSimpleUUID());
         inventory.setBookId(book.getId());
-        ;
 
         bookService.saveBook(book, inventory);
 
@@ -256,7 +253,7 @@ public class WorkbenchController {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
-        List<Borrow> borrowList = null;
+        List<Borrow> borrowList;
 
         if (!"3".equals(sessionUser.getPermissions())) {
             // 管理员查看所有借阅记录

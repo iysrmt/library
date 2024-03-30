@@ -49,7 +49,7 @@ public class UserController {
     @PostMapping("/login")
     public @ResponseBody Result<?> login(User user, HttpSession session) {
 
-        User userByAccount = null;
+        User userByAccount;
 
         // 查用户
         try {

@@ -92,7 +92,7 @@ public class SettingController {
             return Result.fail().message("仅支持 xlsx 格式!");
         }
 
-        InputStream in = null;
+        InputStream in;
 
         try {
             in = file.getInputStream();

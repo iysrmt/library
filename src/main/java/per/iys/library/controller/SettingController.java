@@ -91,7 +91,7 @@ public class SettingController {
      * @return
      */
     @PostMapping("/upload")
-    public @ResponseBody Result uploadExcel(HttpSession session, MultipartFile file) {
+    public @ResponseBody Result<?> uploadExcel(HttpSession session, MultipartFile file) {
         User sessionUser = (User) session.getAttribute("sessionUser");
         if (!"1".equals(sessionUser.getPermissions())) {
             return Result.fail().message("非法操作!");
@@ -99,7 +99,7 @@ public class SettingController {
 
         // 文件名
         String filename = file.getOriginalFilename();
-        if (!filename.toLowerCase().endsWith(".xlsx")) {
+        if (filename != null && !filename.toLowerCase().endsWith(".xlsx")) {
             return Result.fail().message("仅支持 xlsx 格式!");
         }
 

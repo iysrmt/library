@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import per.iys.library.commons.domain.Result;
 import per.iys.library.domain.User;
@@ -52,7 +53,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
-    public @ResponseBody Result login(User user, HttpSession session) {
+    public @ResponseBody Result<?> login(User user, HttpSession session) {
 
         User userByAccount = null;
 
@@ -60,32 +61,28 @@ public class UserController {
         try {
             userByAccount = userService.getUserByAccount(user.getAccount());
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
+            log.error("error: {}", StringUtils.hasText(e.getMessage()) ? e.getMessage() : "系统繁忙, 请稍后重试...", e);
             return Result.fail().message("系统繁忙, 请稍后重试...");
         }
 
         // 判断用户是否存在
         if (userByAccount == null) {
-            log.info("用户名: {}, 不存在!", user.getAccount());
             return Result.fail().message("用户名不存在!");
         }
 
         // 用户是否被冻结
         if ("4".equals(userByAccount.getPermissions())) {
-            log.info("用户名: {}, 冻结不可用!", user.getAccount());
             return Result.fail().message("该用户冻结不可用!");
         }
 
         // 用户存在判断密码
         String userPassword = SecureUtil.md5(user.getPassword());
         if (!userByAccount.getPassword().equals(userPassword)) {
-            log.info("密码错误");
             return Result.fail().message("密码错误!");
         }
 
         session.setAttribute("sessionUser", userByAccount);
-        log.info("用户: {}, 登录成功!", user.getAccount());
+        log.info("用户: {}, 登录系统!", user.getAccount());
 
         return Result.ok();
     }
@@ -120,7 +117,7 @@ public class UserController {
      * @return
      */
     @PutMapping("/profile")
-    public @ResponseBody Result modifyUser(User user, HttpSession session) {
+    public @ResponseBody Result<?> modifyUser(User user, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -161,7 +158,7 @@ public class UserController {
      * @return
      */
     @PutMapping("/change")
-    public @ResponseBody Result changePwd(String oldPwd, String newPwd, HttpSession session) {
+    public @ResponseBody Result<?> changePwd(String oldPwd, String newPwd, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
         String md5Pwd = SecureUtil.md5(oldPwd);
@@ -199,7 +196,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/admin/add")
-    public @ResponseBody Result addUser(User user, HttpSession session) {
+    public @ResponseBody Result<?> addUser(User user, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -246,7 +243,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/admin/queryUserListByConditionForPage")
-    public @ResponseBody Result queryUserListByConditionForPage(User user, int pageNo, int pageSize) {
+    public @ResponseBody Result<?> queryUserListByConditionForPage(User user, int pageNo, int pageSize) {
 
         List<User> userList = userService.queryUserListByConditionForPage(user, pageNo, pageSize);
         int count = userService.getUserCountByConditionForPage(user);
@@ -279,7 +276,7 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/admin/remove")
-    public @ResponseBody Result removeUser(HttpSession session, String id) {
+    public @ResponseBody Result<?> removeUser(HttpSession session, String id) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -305,7 +302,7 @@ public class UserController {
      * @return
      */
     @PutMapping("/admin/edit")
-    public @ResponseBody Result editUser(HttpSession session, User user) {
+    public @ResponseBody Result<?> editUser(HttpSession session, User user) {
         User sessionUser = (User) session.getAttribute("sessionUser");
 
         // 非管理员用户 || 想修改为超级管理 (超级管理有且只有一个)

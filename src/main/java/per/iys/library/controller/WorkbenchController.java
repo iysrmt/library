@@ -78,7 +78,7 @@ public class WorkbenchController {
      * @return
      */
     @PostMapping("/book/add")
-    public @ResponseBody Result addBook(Book book, Inventory inventory, HttpSession session) {
+    public @ResponseBody Result<?> addBook(Book book, Inventory inventory, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -137,7 +137,7 @@ public class WorkbenchController {
      * @return
      */
     @GetMapping("/book/queryBookListByConditionForPage")
-    public @ResponseBody Result queryBookListByConditionForPage(Book book, int pageNo, int pageSize) {
+    public @ResponseBody Result<?> queryBookListByConditionForPage(Book book, int pageNo, int pageSize) {
 
         List<Book> bookList = bookService.queryBookListByConditionForPage(book, pageNo, pageSize);
         int count = bookService.getBookCountByConditionForPage(book);
@@ -178,7 +178,7 @@ public class WorkbenchController {
      * @return
      */
     @DeleteMapping("/book/remove")
-    public @ResponseBody Result removeBook(String id, HttpSession session) {
+    public @ResponseBody Result<?> removeBook(String id, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -200,7 +200,7 @@ public class WorkbenchController {
      * @return
      */
     @GetMapping("/book/edit")
-    public @ResponseBody Result editBookShow(String id, HttpSession session) {
+    public @ResponseBody Result<?> editBookShow(String id, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -228,7 +228,7 @@ public class WorkbenchController {
      * @return
      */
     @PutMapping("/book/edit")
-    public @ResponseBody Result editBook(Book book, String count, HttpSession session) {
+    public @ResponseBody Result<?> editBook(Book book, String count, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -255,7 +255,7 @@ public class WorkbenchController {
      * @return
      */
     @PutMapping("/book/borrow")
-    public @ResponseBody Result borrowBook(String id, HttpSession session) {
+    public @ResponseBody Result<?> borrowBook(String id, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -308,7 +308,7 @@ public class WorkbenchController {
      * @return
      */
     @PutMapping("/book/revert")
-    public @ResponseBody Result revert(String id, HttpSession session) {
+    public @ResponseBody Result<?> revert(String id, HttpSession session) {
 
         User sessionUser = (User) session.getAttribute("sessionUser");
 
